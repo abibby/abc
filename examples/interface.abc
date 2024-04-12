@@ -1,0 +1,15 @@
+
+interface I {
+    void func1();
+    int func2();
+    int func3(int a);
+}
+
+// C
+
+typedef struct I {
+    void* value;
+    void (*func1)();
+    int (*func1)();
+    int (*func1)(int);
+} I

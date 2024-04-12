@@ -1,0 +1,10 @@
+func function(string str) void {
+    println(str);
+}
+
+func main() int {
+    var a int = 1;
+    var b string = "test";
+
+    function(b);
+}
