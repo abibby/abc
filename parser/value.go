@@ -7,5 +7,6 @@ func ParseValue(start int, src []byte) (int, Node, error) {
 		start, src, fmt.Errorf("unknown value"),
 		Normalize(ParseNumber),
 		Normalize(ParseString),
+		Normalize(ParseStructInit),
 	)
 }

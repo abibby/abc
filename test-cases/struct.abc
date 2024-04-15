@@ -1,0 +1,11 @@
+type Test struct {
+    int a;
+    int b;
+}
+
+func main() int {
+    var a Test = Test{
+        a: 1,
+        b: 2,
+    };
+}

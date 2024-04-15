@@ -38,7 +38,7 @@ func Parse(src []byte) ([]Node, error) {
 
 	i := 0
 	for i < len(src) {
-		i, node, err = ParseFunction(i, src)
+		i, node, err = ParseTopLevel(i, src)
 		if err != nil {
 			return nil, err
 		}

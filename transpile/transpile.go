@@ -37,7 +37,7 @@ func Transpile(file string, src []byte) ([]byte, error) {
 
 func transpileNode(s statements, n parser.Node) error {
 	switch n := n.(type) {
-	case *parser.FunctionNode:
+	case *parser.FunctionDefNode:
 		return transpileFunctionNode(s, n)
 	case *parser.WhitespaceNode:
 		return transpileWhitespaceNode(s, n)
@@ -55,6 +55,14 @@ func transpileNode(s statements, n parser.Node) error {
 		return transpileArgumentNode(s, n)
 	case *parser.FunctionCallNode:
 		return transpileFunctionCallNode(s, n)
+	case *parser.TypeDefNode:
+		return transpileTypeDefNode(s, n)
+	case *parser.StructDefNode:
+		return transpileStructDefNode(s, n)
+	case *parser.StructInitNode:
+		return transpileStructInitNode(s, n)
+	case *parser.BasicTypeNode:
+		return transpileBasicTypeNode(s, n)
 	case *RawNode:
 		return transpileRawNode(s, n)
 	case *JoinNode:
@@ -80,7 +88,7 @@ func transpileWhitespaceNode(s statements, _ *parser.WhitespaceNode) error {
 	return err
 }
 
-func transpileFunctionNode(s statements, n *parser.FunctionNode) error {
+func transpileFunctionNode(s statements, n *parser.FunctionDefNode) error {
 	return transpileNodes(s,
 		n.ReturnType,
 		NewRawNode(" "),

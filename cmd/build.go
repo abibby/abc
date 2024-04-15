@@ -58,7 +58,7 @@ var buildCmd = &cobra.Command{
 			cFiles = append(cFiles, filePath)
 		}
 
-		c := exec.Command("gcc", append(cFiles, "-Wall", "-Wextra", "-std=c89", "-pedantic", "-o", path.Join(wd, "a.out"))...)
+		c := exec.Command("gcc", append(cFiles, "-Wall", "-Wextra", "-std=c89", "-pedantic", "-Wmissing-prototypes", "-Wstrict-prototypes", "-Wold-style-definition", "-o", path.Join(wd, "a.out"))...)
 		c.Dir = buildDir
 		c.Stdout = os.Stdout
 		c.Stderr = os.Stderr

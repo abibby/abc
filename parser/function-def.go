@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-type FunctionNode struct {
+type FunctionDefNode struct {
 	LocationNode
 	ReturnType   *IdentifierNode
 	FunctionName *IdentifierNode
@@ -12,7 +12,7 @@ type FunctionNode struct {
 	Block        *BlockNode
 }
 
-func ParseFunction(start int, src []byte) (int, *FunctionNode, error) {
+func ParseFunctionDef(start int, src []byte) (int, *FunctionDefNode, error) {
 	i := start
 
 	i, _, err := ParseExact("func")(i, src)
@@ -60,38 +60,11 @@ func ParseFunction(start int, src []byte) (int, *FunctionNode, error) {
 		return 0, nil, err
 	}
 
-	return i, &FunctionNode{
+	return i, &FunctionDefNode{
 		LocationNode: NewLocationNode(start, i),
 		ReturnType:   returnType,
 		FunctionName: functionName,
 		Arguments:    args,
 		Block:        block,
-	}, nil
-}
-
-type ArgumentNode struct {
-	LocationNode
-	Type *IdentifierNode
-	Name *IdentifierNode
-}
-
-func ParseArgument(start int, src []byte) (int, *ArgumentNode, error) {
-	i := start
-	i, argType, err := ParseIdentifier(i, src)
-	if err != nil {
-		return 0, nil, err
-	}
-
-	i, _ = ParseWhitespace(i, src)
-
-	i, argName, err := ParseIdentifier(i, src)
-	if err != nil {
-		return 0, nil, err
-	}
-
-	return i, &ArgumentNode{
-		LocationNode: NewLocationNode(start, i),
-		Type:         argType,
-		Name:         argName,
 	}, nil
 }
