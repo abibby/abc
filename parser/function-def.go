@@ -6,7 +6,7 @@ import (
 
 type FunctionDefNode struct {
 	LocationNode
-	ReturnType   *IdentifierNode
+	ReturnType   Node
 	FunctionName *IdentifierNode
 	Arguments    []*ArgumentNode
 	Block        *BlockNode
@@ -48,7 +48,7 @@ func ParseFunctionDef(start int, src []byte) (int, *FunctionDefNode, error) {
 
 	i, _ = ParseWhitespace(i, src)
 
-	i, returnType, err := ParseIdentifier(i, src)
+	i, returnType, err := ParseType(i, src)
 	if err != nil {
 		return 0, nil, err
 	}

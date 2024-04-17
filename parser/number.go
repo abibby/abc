@@ -24,3 +24,7 @@ func ParseNumber(start int, src []byte) (int, *NumberNode, error) {
 		Value:        l.String(src),
 	}, nil
 }
+
+func (n *NumberNode) GetType() string {
+	return "int"
+}

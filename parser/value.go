@@ -2,11 +2,18 @@ package parser
 
 import "fmt"
 
-func ParseValue(start int, src []byte) (int, Node, error) {
-	return NewOptionParser(
+type ValueNode interface {
+	Node
+	GetType() string
+}
+
+func ParseValue(start int, src []byte) (int, ValueNode, error) {
+	return NewOptionParser[ValueNode](
 		start, src, fmt.Errorf("unknown value"),
 		Normalize(ParseNumber),
 		Normalize(ParseString),
 		Normalize(ParseStructInit),
+		Normalize(ParsePointer),
+		Normalize(ParseVariable),
 	)
 }

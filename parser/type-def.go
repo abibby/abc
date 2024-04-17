@@ -27,18 +27,18 @@ func ParseTypeDef(start int, src []byte) (int, *TypeDefNode, error) {
 
 	i, _ = ParseWhitespace(i, src)
 
-	i, Type, err := ParseType(i, src)
+	i, typ, err := ParseType(i, src)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	if n, ok := Type.(SetNamer); ok {
+	if n, ok := typ.(SetNamer); ok {
 		n.SetName(name.Value)
 	}
 
 	return i, &TypeDefNode{
 		LocationNode: NewLocationNode(start, i),
 		Name:         name,
-		Type:         Type,
+		Type:         typ,
 	}, nil
 }

@@ -56,7 +56,11 @@ func transpileStructDefNode(s statements, n *parser.StructDefNode) error {
 	return nil
 }
 func transpileStructInitNode(s statements, n *parser.StructInitNode) error {
-	_, err := s.WriteString("{")
+	_, err := s.WriteString("(" + n.Type.Value + ")")
+	if err != nil {
+		return err
+	}
+	_, err = s.WriteString("{")
 	if err != nil {
 		return err
 	}
@@ -90,4 +94,34 @@ func transpileStructInitNode(s statements, n *parser.StructInitNode) error {
 func transpileBasicTypeNode(s statements, n *parser.BasicTypeNode) error {
 	_, err := s.WriteString(n.Value)
 	return err
+}
+
+func transpilePointerTypeNode(s statements, n *parser.PointerTypeNode) error {
+	err := transpileNode(s, n.Type)
+	if err != nil {
+		return err
+	}
+	_, err = s.WriteString("*")
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func transpileNewNode(s statements, n *parser.NewNode) error {
+	_, err := s.WriteString("new_pointer(sizeof(" + n.Value.GetType() + "), &")
+	if err != nil {
+		return err
+	}
+
+	err = transpileNode(s, n.Value)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.WriteString(")")
+	if err != nil {
+		return err
+	}
+	return nil
 }

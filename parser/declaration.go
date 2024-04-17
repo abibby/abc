@@ -2,8 +2,8 @@ package parser
 
 type DeclarationNode struct {
 	LocationNode
-	Type  *IdentifierNode
 	Name  *IdentifierNode
+	Type  Node
 	Value Node
 }
 
@@ -24,7 +24,7 @@ func ParseDeclaration(start int, src []byte) (int, *DeclarationNode, error) {
 
 	i, _ = ParseWhitespace(i, src)
 
-	i, typ, err := ParseIdentifier(i, src)
+	i, typ, err := ParseType(i, src)
 	if err != nil {
 		return 0, nil, err
 	}

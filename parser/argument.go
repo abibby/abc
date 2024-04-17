@@ -8,21 +8,21 @@ type ArgumentNode struct {
 
 func ParseArgument(start int, src []byte) (int, *ArgumentNode, error) {
 	i := start
-	i, argType, err := ParseType(i, src)
+	i, typ, err := ParseType(i, src)
 	if err != nil {
 		return 0, nil, err
 	}
 
 	i, _ = ParseWhitespace(i, src)
 
-	i, argName, err := ParseIdentifier(i, src)
+	i, name, err := ParseIdentifier(i, src)
 	if err != nil {
 		return 0, nil, err
 	}
 
 	return i, &ArgumentNode{
 		LocationNode: NewLocationNode(start, i),
-		Type:         argType,
-		Name:         argName,
+		Type:         typ,
+		Name:         name,
 	}, nil
 }

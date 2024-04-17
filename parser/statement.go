@@ -3,7 +3,7 @@ package parser
 import "fmt"
 
 func ParseStatement(start int, src []byte) (int, Node, error) {
-	i, statement, err := NewOptionParser(
+	i, statement, err := NewOptionParser[Node](
 		start, src, fmt.Errorf("unknown statement"),
 		Normalize(ParseBlock),
 		Normalize(ParseDeclaration),

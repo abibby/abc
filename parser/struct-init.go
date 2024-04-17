@@ -7,14 +7,14 @@ type StructInitProp struct {
 
 type StructInitNode struct {
 	LocationNode
-	Name  *IdentifierNode
+	Type  *IdentifierNode
 	Props []*StructInitProp
 }
 
 func ParseStructInit(start int, src []byte) (int, *StructInitNode, error) {
 	i := start
 
-	i, typeName, err := ParseIdentifier(i, src)
+	i, typ, err := ParseIdentifier(i, src)
 	if err != nil {
 		return 0, nil, ErrWrongParser
 	}
@@ -69,7 +69,11 @@ func ParseStructInit(start int, src []byte) (int, *StructInitNode, error) {
 
 	return i, &StructInitNode{
 		LocationNode: NewLocationNode(start, i),
-		Name:         typeName,
+		Type:         typ,
 		Props:        props,
 	}, nil
+}
+
+func (n *StructInitNode) GetType() string {
+	return n.Type.Value
 }

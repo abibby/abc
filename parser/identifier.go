@@ -20,7 +20,7 @@ func ParseIdentifier(start int, src []byte) (int, *IdentifierNode, error) {
 		}
 	}
 	if start == end {
-		return 0, nil, NewError(src, start, fmt.Errorf("invalid identifier expected [a-zA-Z0-9_] received %c", src[start]))
+		return 0, nil, ErrWrongParser
 	}
 
 	l := NewLocationNode(start, end-1)

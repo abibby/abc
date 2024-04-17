@@ -1,6 +1,10 @@
 package parser
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"reflect"
+)
 
 type Parser func(start int, src []byte) (int, Node, error)
 
@@ -10,7 +14,7 @@ func Normalize[T Node](cb func(start int, src []byte) (int, T, error)) Parser {
 	}
 }
 
-func NewOptionParser(start int, src []byte, fallbackErr error, parsers ...Parser) (int, Node, error) {
+func NewOptionParser[T Node](start int, src []byte, fallbackErr error, parsers ...Parser) (int, T, error) {
 	var i int
 	var node Node
 	var err error
@@ -20,10 +24,17 @@ func NewOptionParser(start int, src []byte, fallbackErr error, parsers ...Parser
 		if errors.Is(err, ErrWrongParser) {
 			continue
 		} else if err != nil {
-			return 0, nil, err
+			var zero T
+			return 0, zero, err
 		}
-		return i, node, nil
+		n, ok := node.(T)
+		if !ok {
+			var zero T
+			return 0, zero, NewError(src, start, fmt.Errorf("node %s must be of type %s", reflect.TypeOf(node), reflect.TypeOf(([]T)(nil)).Elem()))
+		}
+		return i, n, nil
 	}
 
-	return 0, nil, NewError(src, start, fallbackErr)
+	var zero T
+	return 0, zero, NewError(src, start, fallbackErr)
 }

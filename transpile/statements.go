@@ -41,11 +41,14 @@ func (s *rootStatements) WriteString(str string) (int, error) {
 }
 func (s *rootStatements) Bytes() []byte {
 	b := &bytes.Buffer{}
+
 	for _, statement := range s.statements {
+		b.WriteString("\n")
 		_, err := b.Write(statement)
 		if err != nil {
 			panic(err)
 		}
+		b.WriteString("\n")
 	}
 
 	_, err := b.Write(s.current.Bytes())

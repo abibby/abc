@@ -3,5 +3,6 @@
 
 #include "string.h"
 #include "stdio.h"
+#include "new.h"
 
 #endif

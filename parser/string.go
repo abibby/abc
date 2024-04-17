@@ -47,3 +47,7 @@ func ParseString(start int, src []byte) (int, *StringNode, error) {
 
 	return 0, nil, NewError(src, i, fmt.Errorf("expected \" found EOF"))
 }
+
+func (n *StringNode) GetType() string {
+	return "string"
+}
