@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
+	"os"
 	"path"
 	"strings"
 	"testing"
@@ -23,22 +24,29 @@ type TestCase struct {
 var files embed.FS
 
 func TestExamples(t *testing.T) {
+	filter := os.Getenv("TEST_FILTER")
+
 	testCases := []*TestCase{}
 	err := fs.WalkDir(files, "test-cases", func(p string, d fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+
 		if d.IsDir() {
 			return nil
 		}
 
+		if filter != "" {
+			if !strings.Contains(p, filter) {
+				return nil
+			}
+		}
+
 		ext := path.Ext(p)
 		name := strings.TrimSuffix(p, ext)
-		// tc, ok := testCases[name]
-		// if !ok {
-		// 	tc = &TestCase{}
-		// 	testCases[name] = tc
-		// }
 		b, err := files.ReadFile(p)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		tc, err := parseMD(b, name)

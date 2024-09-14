@@ -16,6 +16,16 @@ func Transpile(file string, src []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	nodes, err = processReturn(nodes)
+	if err != nil {
+		return nil, err
+	}
+
+	nodes, err = processDefer(nodes)
+	if err != nil {
+		return nil, err
+	}
+
 	s := newStatements()
 
 	for _, node := range nodes {
@@ -39,7 +49,7 @@ func Transpile(file string, src []byte) ([]byte, error) {
 	return append([]byte("#include \"runtime.h\"\n"), s.Bytes()...), nil
 }
 
-func transpileNode(s statements, n parser.Node) error {
+func transpileNode(s cWriter, n parser.Node) error {
 	switch n := n.(type) {
 	case *parser.FunctionDefNode:
 		return transpileFunctionNode(s, n)
@@ -51,6 +61,8 @@ func transpileNode(s statements, n parser.Node) error {
 		return transpileDeclarationNode(s, n)
 	case *parser.BlockNode:
 		return transpileBlockNode(s, n)
+	case *parser.StatementNode:
+		return transpileStatementNode(s, n)
 	case *parser.NumberNode:
 		return transpileNumberNode(s, n)
 	case *parser.StringNode:
@@ -73,6 +85,8 @@ func transpileNode(s statements, n parser.Node) error {
 		return transpilePointerTypeNode(s, n)
 	case *parser.VariableNode:
 		return transpileVariableNode(s, n)
+	case *parser.ReturnNode:
+		return transpileReturnNode(s, n)
 	case *RawNode:
 		return transpileRawNode(s, n)
 	case *JoinNode:
@@ -83,7 +97,7 @@ func transpileNode(s statements, n parser.Node) error {
 	}
 }
 
-func transpileNodes(s statements, nodes ...parser.Node) error {
+func transpileNodes(s cWriter, nodes ...parser.Node) error {
 	for _, n := range nodes {
 		err := transpileNode(s, n)
 		if err != nil {
@@ -93,12 +107,12 @@ func transpileNodes(s statements, nodes ...parser.Node) error {
 	return nil
 }
 
-func transpileWhitespaceNode(s statements, _ *parser.WhitespaceNode) error {
+func transpileWhitespaceNode(s cWriter, _ *parser.WhitespaceNode) error {
 	_, err := s.Write([]byte(" "))
 	return err
 }
 
-func transpileFunctionNode(s statements, n *parser.FunctionDefNode) error {
+func transpileFunctionNode(s cWriter, n *parser.FunctionDefNode) error {
 	defS := newStatements()
 	transpileNodes(defS,
 		n.ReturnType,
@@ -121,12 +135,12 @@ func transpileFunctionNode(s statements, n *parser.FunctionDefNode) error {
 	)
 }
 
-func transpileIdentifierNode(s statements, n *parser.IdentifierNode) error {
+func transpileIdentifierNode(s cWriter, n *parser.IdentifierNode) error {
 	_, err := s.Write([]byte(n.Value))
 	return err
 }
 
-func transpileBlockNode(s statements, n *parser.BlockNode) error {
+func transpileBlockNode(s cWriter, n *parser.BlockNode) error {
 	_, err := s.WriteString("{")
 	if err != nil {
 		return err
@@ -149,22 +163,29 @@ func transpileBlockNode(s statements, n *parser.BlockNode) error {
 	}
 	return nil
 }
-func transpileDeclarationNode(s statements, n *parser.DeclarationNode) error {
+
+func transpileStatementNode(s cWriter, n *parser.StatementNode) error {
+	return transpileNodes(s,
+		n.Value,
+		NewRawNode(";"),
+	)
+}
+
+func transpileDeclarationNode(s cWriter, n *parser.DeclarationNode) error {
 	return transpileNodes(s,
 		n.Type,
 		NewRawNode(" "),
 		n.Name,
 		NewRawNode(" = "),
 		n.Value,
-		NewRawNode(";"),
 	)
 }
-func transpileNumberNode(s statements, n *parser.NumberNode) error {
+func transpileNumberNode(s cWriter, n *parser.NumberNode) error {
 	_, err := fmt.Fprint(s, n.Value)
 	return err
 }
 
-func transpileStringNode(s statements, n *parser.StringNode) error {
+func transpileStringNode(s cWriter, n *parser.StringNode) error {
 	b, err := json.Marshal(n.Value)
 	if err != nil {
 		return err
@@ -173,18 +194,29 @@ func transpileStringNode(s statements, n *parser.StringNode) error {
 	return err
 }
 
-func transpileArgumentNode(s statements, n *parser.ArgumentNode) error {
+func transpileArgumentNode(s cWriter, n *parser.ArgumentNode) error {
 	return transpileNodes(s,
 		n.Type,
 		NewRawNode(" "),
 		n.Name,
 	)
 }
-func transpileFunctionCallNode(s statements, n *parser.FunctionCallNode) error {
+func transpileFunctionCallNode(s cWriter, n *parser.FunctionCallNode) error {
 	return transpileNodes(s,
 		n.Name,
 		NewRawNode("("),
 		joinNodes(n.Arguments, ", "),
-		NewRawNode(");"),
+		NewRawNode(")"),
 	)
+}
+
+func transpileReturnNode(s cWriter, n *parser.ReturnNode) error {
+	_, err := s.WriteString("return")
+	if err != nil {
+		return err
+	}
+	if n.Value == nil {
+		return nil
+	}
+	return transpileNode(s, n.Value)
 }

@@ -1,7 +1,5 @@
 package parser
 
-import "fmt"
-
 type IdentifierNode struct {
 	LocationNode
 	Value string
@@ -13,7 +11,7 @@ func ParseIdentifier(start int, src []byte) (int, *IdentifierNode, error) {
 		c := src[i]
 		end = i
 		if i == start && '0' <= c && c <= '9' {
-			return 0, nil, NewError(src, i, fmt.Errorf("identifiers must not start with a number"))
+			return 0, nil, ErrWrongParser
 		}
 		if ('a' > c || c > 'z') && ('A' > c || c > 'Z') && ('0' > c || c > '9') && c != '_' {
 			break

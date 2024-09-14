@@ -14,7 +14,7 @@ func NewRawNode(raw string) *RawNode {
 	}
 }
 
-func transpileRawNode(s statements, n *RawNode) error {
+func transpileRawNode(s cWriter, n *RawNode) error {
 	_, err := s.Write([]byte(n.Raw))
 	return err
 }

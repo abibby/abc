@@ -13,6 +13,7 @@ func ParseValue(start int, src []byte) (int, ValueNode, error) {
 		Normalize(ParseNumber),
 		Normalize(ParseString),
 		Normalize(ParseStructInit),
+		Normalize(ParseFunctionCall),
 		Normalize(ParsePointer),
 		Normalize(ParseVariable),
 	)

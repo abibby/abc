@@ -6,7 +6,7 @@ import (
 
 type FunctionDefNode struct {
 	LocationNode
-	ReturnType   Node
+	ReturnType   TypeNode
 	FunctionName *IdentifierNode
 	Arguments    []*ArgumentNode
 	Block        *BlockNode

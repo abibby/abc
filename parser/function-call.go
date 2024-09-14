@@ -21,7 +21,7 @@ func ParseFunctionCall(start int, src []byte) (int, *FunctionCallNode, error) {
 	args := []*IdentifierNode{}
 
 	var arg *IdentifierNode
-	for {
+	for src[i] != ')' {
 		i, arg, err = ParseIdentifier(i, src)
 		if err != nil {
 			return 0, nil, err
@@ -52,4 +52,8 @@ func ParseFunctionCall(start int, src []byte) (int, *FunctionCallNode, error) {
 		Name:         name,
 		Arguments:    args,
 	}, nil
+}
+
+func (n *FunctionCallNode) GetType() string {
+	return "unknown"
 }

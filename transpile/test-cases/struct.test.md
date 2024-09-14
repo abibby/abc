@@ -1,7 +1,7 @@
 ```abc
 type Test struct {
-    int a;
-    int b;
+    a int;
+    b int;
 }
 
 func main() int {

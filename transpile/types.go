@@ -2,7 +2,7 @@ package transpile
 
 import "github.com/abibby/abc/parser"
 
-func transpileTypeDefNode(s statements, n *parser.TypeDefNode) error {
+func transpileTypeDefNode(s cWriter, n *parser.TypeDefNode) error {
 	_, err := s.WriteString("typedef ")
 	if err != nil {
 		return err
@@ -18,7 +18,7 @@ func transpileTypeDefNode(s statements, n *parser.TypeDefNode) error {
 	}
 	return nil
 }
-func transpileStructDefNode(s statements, n *parser.StructDefNode) error {
+func transpileStructDefNode(s cWriter, n *parser.StructDefNode) error {
 	_, err := s.WriteString("struct " + n.Name + " {")
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func transpileStructDefNode(s statements, n *parser.StructDefNode) error {
 
 	return nil
 }
-func transpileStructInitNode(s statements, n *parser.StructInitNode) error {
+func transpileStructInitNode(s cWriter, n *parser.StructInitNode) error {
 	_, err := s.WriteString("(" + n.Type.Value + ")")
 	if err != nil {
 		return err
@@ -91,12 +91,12 @@ func transpileStructInitNode(s statements, n *parser.StructInitNode) error {
 
 	return nil
 }
-func transpileBasicTypeNode(s statements, n *parser.BasicTypeNode) error {
+func transpileBasicTypeNode(s cWriter, n *parser.BasicTypeNode) error {
 	_, err := s.WriteString(n.Value)
 	return err
 }
 
-func transpilePointerTypeNode(s statements, n *parser.PointerTypeNode) error {
+func transpilePointerTypeNode(s cWriter, n *parser.PointerTypeNode) error {
 	err := transpileNode(s, n.Type)
 	if err != nil {
 		return err
@@ -108,7 +108,7 @@ func transpilePointerTypeNode(s statements, n *parser.PointerTypeNode) error {
 	return err
 }
 
-func transpileNewNode(s statements, n *parser.NewNode) error {
+func transpileNewNode(s cWriter, n *parser.NewNode) error {
 	_, err := s.WriteString("new_pointer(sizeof(" + n.Value.GetType() + "), &")
 	if err != nil {
 		return err

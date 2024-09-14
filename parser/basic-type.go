@@ -8,6 +8,7 @@ type BasicTypeNode struct {
 var BasicTypes = []string{
 	"string",
 	"int",
+	"void",
 }
 
 func ParseBasicType(start int, src []byte) (int, *BasicTypeNode, error) {

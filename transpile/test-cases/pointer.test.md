@@ -1,6 +1,6 @@
 ```abc
 type Test struct {
-    string a;
+    a string;
 }
 
 func main() int {
@@ -8,7 +8,13 @@ func main() int {
         a: "test",
     };
 
-    var b *Test = a;
+    var b *Test = newTest();
+}
+
+func newTest() *Test {
+    return &Test{
+        a: "new func",
+    };
 }
 ```
 
@@ -16,6 +22,8 @@ func main() int {
 #include "runtime.h"
 
 int main();
+
+Test* newTest();
 
 typedef struct Test {
     string a;
@@ -25,6 +33,12 @@ int main() {
     Test* a = new_pointer(sizeof(Test), &(Test){
         .a = new_string("test")
     });
-    Test* b = a;
+    Test* b = newTest();
+}
+
+Test* newTest() {
+    return new_pointer(sizeof(Test), &(Test){
+        .a = new_string("new func")
+    });
 }
 ```

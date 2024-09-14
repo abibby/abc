@@ -3,6 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
+	"runtime/debug"
 )
 
 var (
@@ -14,20 +15,23 @@ type Error struct {
 	file string
 	src  []byte
 	loc  int
+
+	transpilerTrace []byte
 }
 
 func NewError(src []byte, loc int, err error) *Error {
 	return &Error{
-		err:  err,
-		file: "src.abc",
-		src:  src,
-		loc:  loc,
+		err:             err,
+		file:            "src.abc",
+		src:             src,
+		loc:             loc,
+		transpilerTrace: debug.Stack(),
 	}
 }
 
 func (e *Error) Error() string {
 	line, column := e.LineColumn()
-	return fmt.Sprintf("%s:%d:%d %v", e.file, line, column, e.err)
+	return fmt.Sprintf("%s:%d:%d %v\n\n%s", e.file, line, column, e.err, e.transpilerTrace)
 }
 
 func (e *Error) Unwrap() error {

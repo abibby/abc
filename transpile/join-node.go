@@ -20,7 +20,7 @@ func joinNodes[T parser.Node](nodes []T, glue string) *JoinNode {
 	}
 }
 
-func transpileJoinNode(s statements, n *JoinNode) error {
+func transpileJoinNode(s cWriter, n *JoinNode) error {
 	for i, node := range n.Nodes {
 		if i > 0 {
 			_, err := s.WriteString(n.Glue)

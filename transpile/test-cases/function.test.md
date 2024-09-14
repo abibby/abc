@@ -6,7 +6,7 @@ func main() int {
     function(b);
 }
 
-func function(string str) void {
+func function(str string) void {
     println(str);
 }
 
